@@ -61,15 +61,15 @@ je dupfd
 
 mov edx, len
 mov ecx, ncmsg
-mov ebx, 1
-mov eax, 4
+mov ebx, 1 ; stdout
+mov eax, 4 ; syscall write
 int 0x80
 
-mov dword [tv_sec], 0xA
-mov dword [tv_nsec], 0
-mov eax, 0xA2
-mov ebx, timeval
-mov ecx, 0
+xor ecx, ecx
+mov dword [tv_sec], 0xA ; time in seconds : 10
+mov dword [tv_nsec], 0 ; time in nanoseconds : 0
+mov eax, 0xA2 ; nano_sleep call
+mov ebx, timeval ; mov structure in ebx
 int 0x80
 
 jmp _start

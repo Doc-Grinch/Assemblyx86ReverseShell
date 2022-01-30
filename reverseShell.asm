@@ -3,7 +3,7 @@
 global _start
 
 
-section .text
+; section .text
 
 
 section .data
@@ -19,7 +19,7 @@ timeval:
 tv_sec dd 0 ; seconds
 tv_nsec dd 0 ; nanoseconds
 
-
+section .text
 _start:
 
 xor eax, eax

